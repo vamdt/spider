@@ -3,14 +3,15 @@ import urllib
 import json
 import os
 
+BASE_DOWN_DIR = './download'
+BASE_DOWN_POSTS_DIR = BASE_DOWN_DIR + '/posts'
 def main():
     urls = get_urls('http://www.yinwang.org/')
-    dir_str = './downloads/posts'
 
-    if not os.path.exists(dir_str):
-        os.makedirs(dir_str)
+    if not os.path.exists(BASE_DOWN_POSTS_DIR):
+        os.makedirs(BASE_DOWN_POSTS_DIR)
 
-    save_as_json(urls, dir_str + '/urls.json')
+    save_as_json(urls, BASE_DOWN_POSTS_DIR + '/urls.json')
     urls = urls[0:1]
     save_posts(urls)
     
@@ -29,10 +30,9 @@ def get_html(url):
     return urllib.urlopen(url).read()
 
 def save_posts(urls):
-    dir_str = './downloads/posts'
     for url in urls:
         html = get_html(url['url'])
-        file_name = dir_str + '/' + url['name'] +'.html'
+        file_name = BASE_DOWN_POSTS_DIR + '/' + url['name'] +'.html'
         save( html, file_name)
 
 def save(obj, name):
