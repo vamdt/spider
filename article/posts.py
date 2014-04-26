@@ -1,10 +1,15 @@
 import re
 import urllib
+import json
 
 def main():
     # get_urls('http://www.yinwang.org/')
     urls = get_urls('index.tmp')
-    
+    urls_json = json.dumps( urls, sort_keys=True, indent=4, separators=(',', ': ') )
+    file = open('urls.tmp', 'w')
+    file.write( urls_json )
+    file.close()
+
 def get_urls(entry):
     urls = []
     f = urllib.urlopen(entry)
