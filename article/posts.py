@@ -7,14 +7,9 @@ BASE_DOWN_DIR = './download'
 BASE_DOWN_POSTS_DIR = BASE_DOWN_DIR + '/posts'
 def main():
     urls = get_urls('http://www.yinwang.org/')
-
-    if not os.path.exists(BASE_DOWN_POSTS_DIR):
-        os.makedirs(BASE_DOWN_POSTS_DIR)
-
+    create_dirs(BASE_DOWN_POSTS_DIR)
     save_as_json(urls, BASE_DOWN_POSTS_DIR + '/urls.json')
-    urls = urls[0:1]
     save_posts(urls)
-    
 
 def get_urls(entry):
     urls = []
@@ -28,6 +23,11 @@ def get_urls(entry):
 
 def get_html(url):
     return urllib.urlopen(url).read()
+
+def create_dirs(dir_name):
+    if not os.path.exists(dir_name):
+        os.makedirs(dir_name)
+
 
 def save_posts(urls):
     for url in urls:
