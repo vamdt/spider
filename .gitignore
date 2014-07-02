@@ -2,5 +2,7 @@
 *.swp
 *.tmp
 
+*.txt
+
 # ignore data
 download/
