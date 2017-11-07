@@ -1,15 +1,16 @@
 from zaobao import Zaobao
-import os
+import sys, os
 
 class RssUpdater:
     def __init__(self):
         self.zb = Zaobao()
         self.last_url = ""
-        return
+        self.dir = os.path.dirname(os.path.realpath(__file__))
+        self.last_url_file_path = os.path.join(self.dir, "zaobao_last_url.txt")
+        self.rss_xml_file_path = os.path.join(self.dir, "zaobao_rss.xml")
 
     def update(self):
-        f = "zaobao_last_url.txt"
-        if os.path.exists(f):
+        if os.path.exists(self.last_url_file_path):
             file = open(f)
             self.last_url = file.read().strip()
 
@@ -21,7 +22,7 @@ class RssUpdater:
             if self.fetch_finished():
                 fetch_end = True
             page += 1
-        self.zb.generate()
+        self.zb.generate(self.rss_xml_file_path)
         self.update_last_url()
 
     def fetch_finished(self):
@@ -35,7 +36,7 @@ class RssUpdater:
             return False
         
     def update_last_url(self):
-        file = open("zaobao_last_url.txt", "w")
+        file = open(self.last_url_file_path, "w")
         file.write(self.zb.first_url())
 
 if __name__ == "__main__":

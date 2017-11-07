@@ -74,7 +74,7 @@ class Zaobao:
     def first_url(self):
         return self.channel_items[0].link
 
-    def generate(self):
+    def generate(self, file_path):
         channel = Channel()
         channel.title = "联合早报网 - 中国新闻"
         channel.link = "http://www.zaobao.com/news/china"
@@ -83,6 +83,6 @@ class Zaobao:
         now = datetime.datetime.now()
         channel.last_build_date = email.utils.formatdate(time.mktime(now.timetuple()), True)
         channel.image_url = "http://www.zaobao.com/sites/all/themes/zb2016/assets/imgs/zbsg/apple-icon-144x144.png"
-        builder = RssBuilderlist_url()
+        builder = RssBuilder()
         builder.build(channel, self.channel_items)
-        builder.write("zaobao_rss")
+        builder.write(file_path)

@@ -66,8 +66,8 @@ class RssBuilder:
     def build_end(self):
         self.tree =  ET.ElementTree(self.rss)
 
-    def write(self, filename):
-        self.tree.write(filename + ".xml", "utf-8")
+    def write(self, file_path):
+        self.tree.write(file_path, "utf-8")
 
 
 
