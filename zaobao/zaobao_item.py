@@ -31,7 +31,7 @@ class ZaoBaoItemParser:
             }
         s = requests.Session()
         s.headers.update(headers)
-        key_r = s.get(url, timeout=5)
+        key_r = s.get(url, timeout=10)
         return key_r.content
 
     def parse_content(self, content):

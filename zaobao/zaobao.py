@@ -7,6 +7,7 @@ from zaobao_item import ZaoBaoItemParser
 import datetime
 import time
 import email.utils
+from logger import Logger
 
 
 class Zaobao:
@@ -17,6 +18,7 @@ class Zaobao:
     def __init__(self):
         self.set_encoding()
         self.channel_items = []
+        self.logger = Logger.getLogger()
 
     def main(self, page):
         content = self.fetch_list_content(page)
@@ -42,21 +44,20 @@ class Zaobao:
         url = self.list_url
         if page > 1:
             url = self.list_url + "?page=" + `page`
-        print url
-        key_r = s.get(url, timeout=5)
+        self.logger.info("fetching: " + url)
+        key_r = s.get(url, timeout=10)
         return key_r.content
 
     def parse_content(self, content):
         html = BeautifulSoup(content, 'html.parser')
-        #print html.body.find("div", {"class": "container page-wrapper"})
         post_list = html.body.find_all("div", {"class": "post-detail"})
-        print post_list
+        self.logger.info("post_list: " + str(post_list))
         for post in post_list:
             title = post.find(class_="post-title").text 
             link = self.ZAOBAO_PREFIX + post.find_parent()["href"] 
-            print link
             item = ZaoBaoItemParser().main(link)
-            print item["content"][:100]
+            self.logger.info("post link: " + link)
+            self.logger.info("post content-100" + item["content"][:100])
             channel_item = ChannelItem(title, link, item["content"])
             channel_item.author = item["author"]
             channel_item.pub_date = item["pub_date"]
