@@ -14,14 +14,14 @@ class Zaobao:
     ZAOBAO_PREFIX = "http://www.zaobao.com"
     list_url = ZAOBAO_PREFIX + "/news/china"
 
-    def __init__():
-        set_encoding()
+    def __init__(self):
+        self.set_encoding()
         self.channel_items = []
 
     def main(self, page):
-        # content = fetch_list_content()
-        file = open('zaobao.html', 'r')
-        content = file.read()
+        content = self.fetch_list_content(page)
+        #file = open('zaobao.html', 'r')
+        # content = file.read()
         self.parse_content(content)
 
     def set_encoding(self):
@@ -39,24 +39,28 @@ class Zaobao:
         }
         s = requests.Session()
         s.headers.update(headers)
+        url = self.list_url
         if page > 1:
-            list_url += "?page=" + page
-        key_r = s.get(list_url)
+            url = self.list_url + "?page=" + `page`
+        print url
+        key_r = s.get(url, timeout=5)
         return key_r.content
 
     def parse_content(self, content):
         html = BeautifulSoup(content, 'html.parser')
         #print html.body.find("div", {"class": "container page-wrapper"})
         post_list = html.body.find_all("div", {"class": "post-detail"})
-        channel_items = []
+        print post_list
         for post in post_list:
             title = post.find(class_="post-title").text 
-            link = ZAOBAO_PREFIX + post.find_parent()["href"] 
-            item = ZaoBaoItemParser().main()
+            link = self.ZAOBAO_PREFIX + post.find_parent()["href"] 
+            print link
+            item = ZaoBaoItemParser().main(link)
+            print item["content"][:100]
             channel_item = ChannelItem(title, link, item["content"])
             channel_item.author = item["author"]
             channel_item.pub_date = item["pub_date"]
-            channel_items.append(channel_item)
+            self.channel_items.append(channel_item)
 
     def size(self):
         return len(self.channel_items)
@@ -79,6 +83,6 @@ class Zaobao:
         now = datetime.datetime.now()
         channel.last_build_date = email.utils.formatdate(time.mktime(now.timetuple()), True)
         channel.image_url = "http://www.zaobao.com/sites/all/themes/zb2016/assets/imgs/zbsg/apple-icon-144x144.png"
-        builder = RssBuilder()
+        builder = RssBuilderlist_url()
         builder.build(channel, self.channel_items)
         builder.write("zaobao_rss")

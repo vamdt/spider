@@ -26,7 +26,7 @@ class ChannelItem:
 class RssBuilder:
     def __init__(self):
         self.rss = ET.Element("rss")
-        self.rss.attrib = {"version": "2.0"}
+        self.rss.attrib = {"version": "2.0", "xmlns:atom": "http://www.w3.org/2005/Atom"}
 
 
     def build(self, channel, channel_item_list):
@@ -41,6 +41,7 @@ class RssBuilder:
         ET.SubElement(self.channel_el, "description").text = channel.description
         ET.SubElement(self.channel_el, "lastBuildDate").text = channel.last_build_date
         ET.SubElement(self.channel_el, "language").text = channel.language
+        ET.SubElement(self.channel_el, "atom:link").attrib = {"href": channel.link, "rel": "self", "type": "application/rss+xml"}
         image_el = ET.SubElement(self.channel_el, "image")
         ET.SubElement(image_el, "url").text = channel.image_url
         ET.SubElement(image_el, "title").text = channel.title

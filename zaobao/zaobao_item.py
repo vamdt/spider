@@ -6,13 +6,12 @@ from bs4 import BeautifulSoup
 import string
 import email.utils
 
-item_url = "http://www.zaobao.com/news/china/story20171020-804295"
 class ZaoBaoItemParser:
-    def main(self):
+    def main(self, url):
         self.set_encoding()
-        #content = fetch_list_content()
-        file = open('zaobao_item.html', 'r')
-        content = file.read()
+        content = self.fetch_item_content(url)
+        # file = open('zaobao_item.html', 'r')
+        # content = file.read()
         self.item = {}
         self.parse_content(content)
         return self.item
@@ -22,7 +21,7 @@ class ZaoBaoItemParser:
         sys.setdefaultencoding('utf-8')
 
 
-    def fetch_list_content():
+    def fetch_item_content(self, url):
         headers = {
             'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3213.3 Safari/537.36',
             'Host': 'www.zaobao.com',
@@ -32,14 +31,17 @@ class ZaoBaoItemParser:
             }
         s = requests.Session()
         s.headers.update(headers)
-        key_r = s.get(item_url)
+        key_r = s.get(url, timeout=5)
         return key_r.content
 
     def parse_content(self, content):
         soup = BeautifulSoup(content, 'html.parser')
         soup.find(id="imu").extract()
         content = soup.find(class_="article-content-container")
-        author = soup.find(class_="contributor").text
+        author = ""
+        author_el = soup.find(class_="contributor")
+        if author_el is not None:
+            author = author_el.text
         pub_date = soup.find(class_="datestamp").text
         self.item["content"] = self.html_escape(str(content))
         self.item["author"] = author.replace("文/", "")
