@@ -43,7 +43,7 @@ class ZaoBaoItemParser:
         if author_el is not None:
             author = author_el.text
         pub_date = soup.find(class_="datestamp").text
-        self.item["content"] = self.html_escape(str(content))
+        self.item["content"] = str(content)
         self.item["author"] = author.replace("文/", "")
         self.item["pub_date"] =self.parse_date(pub_date)
 

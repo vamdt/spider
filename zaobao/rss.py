@@ -1,4 +1,15 @@
-import xml.etree.cElementTree as ET
+import xml.etree.ElementTree as ET
+
+ET._original_serialize_xml = ET._serialize_xml
+
+
+def _serialize_xml(write, elem, encoding, qnames, namespaces):
+    if elem.tag == '![CDATA[':
+        write("<%s%s]]>%s" % (elem.tag, elem.text, "" if elem.tail is None else elem.tail))
+        return
+    return ET._original_serialize_xml(
+         write, elem, encoding, qnames, namespaces)
+ET._serialize_xml = ET._serialize['xml'] = _serialize_xml
 
 class Channel:
     def __init__(self):
@@ -59,7 +70,8 @@ class RssBuilder:
         ET.SubElement(channel_item_el, "author").text = channel_item.author
         ET.SubElement(channel_item_el, "pubDate").text = channel_item.pub_date
         ET.SubElement(channel_item_el, "guid").text = channel_item.guid
-        ET.SubElement(channel_item_el, "description").text = channel_item.description
+        description_el = ET.SubElement(channel_item_el, "description")
+        ET.SubElement(description_el, "![CDATA[").text = channel_item.description
         for category in channel_item.categories:
             ET.SubElement(channel_item_el, "category").text = category
 

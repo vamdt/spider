@@ -14,7 +14,7 @@ class RssUpdater:
 
     def update(self):
         if os.path.exists(self.last_url_file_path):
-            file = open(f)
+            file = open(self.last_url_file_path)
             self.last_url = file.read().strip()
 
         fetch_end = False
