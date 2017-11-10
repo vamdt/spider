@@ -40,9 +40,9 @@ class ZaoBaoItemParser:
         dfp_wrapper_el = soup.find(id="dfp-ad-midarticlespecial-wrapper")
         if dfp_wrapper_el is not None:
             dfp_wrapper_el.extract()
-        media = soup.find(class_="media-holder")
+        media = self.parse_media(soup)
         article= soup.find(class_="article-content-container")
-        content = str(media) + str(article)
+        content = media + str(article)
         author = ""
         author_el = soup.find(class_="contributor")
         if author_el is not None:
@@ -51,6 +51,18 @@ class ZaoBaoItemParser:
         self.item["content"] = content
         self.item["author"] = author.replace("文/", "")
         self.item["pub_date"] =self.parse_date(pub_date)
+
+    def parse_media(self, soup):
+        result = ""
+        media_el = soup.find(class_="media-holder")
+        if media_el is None:
+            return result
+        first_source_el = media_el.find('source')
+        if first_source_el is None:
+            return result
+        imgurl = first_source_el["data-srcset"]
+        return "<img src='" + imgurl + "' />"
+        
 
     def parse_date(self, date_str):
         import re, time
