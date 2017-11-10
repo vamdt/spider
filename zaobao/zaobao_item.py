@@ -37,13 +37,18 @@ class ZaoBaoItemParser:
     def parse_content(self, content):
         soup = BeautifulSoup(content, 'html.parser')
         soup.find(id="imu").extract()
-        content = soup.find(class_="article-content-container")
+        dfp_wrapper_el = soup.find(id="dfp-ad-midarticlespecial-wrapper")
+        if dfp_wrapper_el is not None:
+            dfp_wrapper_el.extract()
+        media = soup.find(class_="media-holder")
+        article= soup.find(class_="article-content-container")
+        content = str(media) + str(article)
         author = ""
         author_el = soup.find(class_="contributor")
         if author_el is not None:
             author = author_el.text
         pub_date = soup.find(class_="datestamp").text
-        self.item["content"] = str(content)
+        self.item["content"] = content
         self.item["author"] = author.replace("文/", "")
         self.item["pub_date"] =self.parse_date(pub_date)
 
